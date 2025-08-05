@@ -1,12 +1,13 @@
 # RotEncoder
-Light-weight, polling-based rotary encoder driver for ESP-IDF.  Extracted from [GhostESP: Revival](https://github.com/jaylikesbunda/Ghost_ESP) and packaged as an independent component so you can drop it into any `components/` directory.
+
+A driver for quadrature rotary encoders on ESP-IDF. 
 
 ## Features
-* Supports common 2-bit quadrature encoders (with 2 or 4 detents)
-* Debounce and glitch suppression (1 ms default)
-* Speed-based acceleration (×2 / ×4) for fast scrolling
-* Adaptive RPM smoothing – display reacts instantly to big speed changes
-* Pure C; no dynamic allocation, no interrupts required (but ISR-safe)
+* 2-bit quadrature, 2- or 4-detent encoders
+* Built-in debounce (1 ms)
+* Speed-aware acceleration (×2 / ×4)
+* Adaptive RPM smoothing for snappy read-outs
+* Pure C, no heap, ISR-safe
 
 ## Quick Start
 ```c
@@ -18,7 +19,7 @@ void app_main(void)
 {
     encoder_init(&enc, GPIO_NUM_1, GPIO_NUM_2, true, ENCODER_LATCH_FOUR3);
     while (1) {
-        encoder_tick(&enc);            // call as often as you like (e.g. from timer/loop)
+        encoder_tick(&enc);
         int32_t pos = encoder_get_position(&enc);
         encoder_direction_t dir = encoder_get_direction(&enc);
         uint32_t rpm = encoder_get_rpm(&enc);

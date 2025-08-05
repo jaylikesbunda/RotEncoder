@@ -2,7 +2,7 @@
 #include <driver/gpio.h>
 #include <esp_timer.h>
 
-/* --- lookup table from Matthias Hertel’s library --- */
+// State transition table from Matthias Hertel’s library
 static const int8_t KNOBDIR[16] = {
      0, -1,  1,  0,
      1,  0,  0, -1,
@@ -10,12 +10,13 @@ static const int8_t KNOBDIR[16] = {
      0,  1, -1,  0};
 
 #define LATCH0 0
-#define ENCODER_DEBOUNCE_US 1000         /* ignore latches quicker than this */
-#define ENCODER_ACCEL_THRESH_US_1 15000  /* <15 ms => 2x */
-#define ENCODER_ACCEL_THRESH_US_2 5000   /* <5 ms  => 4x */
 #define LATCH3 3
 
-/* helper for ms timestamps */
+// Debounce and acceleration thresholds (µs)
+#define ENCODER_DEBOUNCE_US 1000       // ignore latches <1ms
+#define ENCODER_ACCEL_THRESH_US_1 15000 // 15ms -> 2x
+#define ENCODER_ACCEL_THRESH_US_2 5000  // 5ms  -> 4x
+
 static inline uint32_t now_ms(void)
 {
     return (uint32_t)(esp_timer_get_time() / 1000ULL);
@@ -78,18 +79,17 @@ void encoder_tick(encoder_t *enc)
             uint64_t now_us = esp_timer_get_time();
             uint32_t diff_us = (uint32_t)(now_us - enc->pos_time_us);
 
-            /* Debounce: ignore unrealistically fast successive latches */
             if (diff_us < ENCODER_DEBOUNCE_US) {
-                return; /* keep previous times so next valid diff is correct */
+                return; // Ignore bounce, preserve timing for next valid edge
             }
 
-            /* Adaptive smoothing: restart average window if speed changes >30% */
+            // Reset smoothing window on large speed changes (>30%)
             if (enc->rpm_time_count) {
                 uint32_t last = enc->rpm_time_diffs_us[(enc->rpm_time_index + ENCODER_RPM_SMOOTHING_SIZE - 1) % ENCODER_RPM_SMOOTHING_SIZE];
                 if (last) {
                     uint32_t diff_abs = (diff_us > last) ? (diff_us - last) : (last - diff_us);
                     if (diff_abs * 100 > last * 30) {
-                        enc->rpm_time_count = 0; /* reset window for snappy response */
+                        enc->rpm_time_count = 0; // Reset for instant response
                     }
                 }
             }
@@ -97,7 +97,7 @@ void encoder_tick(encoder_t *enc)
             enc->rpm_time_diffs_us[enc->rpm_time_index] = diff_us;
             enc->rpm_time_index = (enc->rpm_time_index + 1) % ENCODER_RPM_SMOOTHING_SIZE;
 
-            /* Calculate acceleration multiplier */
+            // Apply speed-based acceleration
             int accel_mult = 1;
             if (diff_us < ENCODER_ACCEL_THRESH_US_2) {
                 accel_mult = 4;
