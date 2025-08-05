@@ -8,7 +8,7 @@ Extracted from [GhostESP: Revival](https://github.com/jaylikesbunda/Ghost_ESP) a
 * 2-bit quadrature, 2- or 4-detent encoders
 * Built-in debounce (1 ms)
 * Speed-aware acceleration (×2 / ×4)
-* Adaptive RPM smoothing for snappy read-outs
+* Adaptive RPM smoothing
 * Pure C, no heap, ISR-safe
 
 ## Quick Start
