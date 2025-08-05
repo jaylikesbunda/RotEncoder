@@ -2,6 +2,8 @@
 
 A driver for quadrature rotary encoders on ESP-IDF. 
 
+Extracted from [GhostESP: Revival](https://github.com/jaylikesbunda/Ghost_ESP) and packaged as an independent component so you can drop it into any `components/` directory.
+
 ## Features
 * 2-bit quadrature, 2- or 4-detent encoders
 * Built-in debounce (1 ms)
