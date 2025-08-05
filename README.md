@@ -1,5 +1,5 @@
 # RotEncoder
-Light-weight, polling-based rotary encoder driver for ESP-IDF.  Extracted from the Ghost ESP firmware and packaged as an independent component so you can drop it into any `components/` directory.
+Light-weight, polling-based rotary encoder driver for ESP-IDF.  Extracted from [GhostESP: Revival](https://github.com/jaylikesbunda/Ghost_ESP) and packaged as an independent component so you can drop it into any `components/` directory.
 
 ## Features
 * Supports common 2-bit quadrature encoders (with 2 or 4 detents)
